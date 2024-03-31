@@ -61,13 +61,32 @@
     <p>Apr 24-Apr 29: Conference</p>
   </div>
   <form method="post" action="generate_ics.php">
-    <textarea name="events" rows="10" cols="50" placeholder="Enter events"></textarea><br>
+    <textarea name="events" rows="10" cols="50" placeholder="Enter events here..."></textarea><br>
     <input type="submit" value="Generate iCalendar">
-    <br>
-    <span id="error_message"></span>
   </form>
+  <?php
+  // Display error message if present
+  if (isset($_GET['error'])) {
+      echo '<span id="error_message" style="color: #ff0000;">' . htmlspecialchars($_GET['error']) . '</span>';
+  }
+  ?>
   <script>
-    // (Optional) Add JavaScript code here for basic validation or pre-processing
+    function validateEvents() {
+        var events = document.getElementsByName("events")[0].value.split("\n");
+        var eventRegex = /^[A-Za-z]{3} \d{1,2}-[A-Za-z]{3} \d{1,2}: .+$/;
+        for (var i = 0; i < events.length; i++) {
+            if (!eventRegex.test(events[i])) {
+                document.getElementById("error_message").innerText = "Invalid event format at line " + (i + 1);
+                return false;
+            }
+        }
+        document.getElementById("error_message").innerText = "";
+        return true;
+    }
+
+    document.getElementsByTagName("form")[0].onsubmit = function() {
+        return validateEvents();
+    };
   </script>
 </body>
 </html>
